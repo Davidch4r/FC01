@@ -2,11 +2,24 @@
 // Created by David Pidugu on 6/16/23.
 //
 
+#include <sstream>
 #include "Statement.h"
 
 Statement::Statement(std::vector<Equation*>* variables, std::vector<Equation*>* equations) {
     this->variables = variables;
     this->equations = equations;
+}
+
+// Assume for just X and Y with 2 equations
+Statement::Statement(std::string statement) {
+    Variable X(new eq({new Constant(0)}));
+    Variable Y(new eq({new Constant(0)}));
+    this->variables = new std::vector<Equation*>({&X, &Y});
+    this->equations = new std::vector<Equation*>(2);
+    std::string equation1 = statement.substr(0, statement.find("="));
+    std::string equation2 = statement.substr(statement.find("=") + 1);
+    this->equations->at(0) = atoiEquation(&equation1, &X, &Y);;
+    this->equations->at(1) = atoiEquation(&equation2, &X, &Y);;
 }
 
 std::vector<std::vector<float>*>* Statement::solve(float min, float max, float step) {
@@ -63,4 +76,18 @@ std::vector<std::vector<float>*> Statement::generatePermutations(unsigned n, flo
     }
 
     return permutations;
+}
+
+Equation* Statement::atoiEquation(std::string *str, Variable *X, Variable *Y) {
+    // Seperate by spaces
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(*str);
+    while (std::getline(tokenStream, token, ' ')) {
+        tokens.push_back(token);
+    }
+
+    // TODO: Implement atoiEquation
+
+    return nullptr;
 }

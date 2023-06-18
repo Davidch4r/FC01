@@ -8,16 +8,17 @@ Grapher::Grapher(std::vector<Statement*>* statements) {
     this->statements = statements;
 }
 
-
-void Grapher::displayGraph(int size, std::vector<sf::Color>* lineColors, sf::Color backgroundColor, sf::Color axisColor, float xMin, float xMax, float yMin, float yMax, float step, int SUB_STEPS, float PIXELS_PER_UNIT) {
+void Grapher::displayGraph(float size, std::vector<sf::Color>* lineColors, sf::Color backgroundColor, sf::Color axisColor, float xMin, float xMax, float yMin, float yMax, float step, int SUB_STEPS, float PIXELS_PER_UNIT) {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     sf::RenderWindow window(sf::VideoMode(size, size + size/10), "Graph");
 
+    this->backgroundColor = backgroundColor;
+    this->lineColors = lineColors;
+
     float xIn = xMin;
     float yIn = yMax;
 
-    sf::RenderTexture renderTexture;
     renderTexture.create(size, size);
     renderTexture.clear(sf::Color::Transparent);
 
@@ -35,19 +36,18 @@ void Grapher::displayGraph(int size, std::vector<sf::Color>* lineColors, sf::Col
     renderTexture.draw(yAxis);
 
     // Draw integer markers
-    for (int i = xMin; i < xMax; i++) {
+    for (float i = xMin; i < xMax; i++) {
         sf::RectangleShape marker(sf::Vector2f(1, size));
         marker.setPosition((i - xMin) / (xMax - xMin) * size, 0);
         marker.setFillColor(sf::Color(axisColor.r, axisColor.g, axisColor.b, 100));
         renderTexture.draw(marker);
     }
-    for (int i = yMin; i < yMax; i++) {
+    for (float i = yMin; i < yMax; i++) {
         sf::RectangleShape marker(sf::Vector2f(size, 1));
         marker.setPosition(0, size - (i - yMin) / (yMax - yMin) * size);
         marker.setFillColor(sf::Color(axisColor.r, axisColor.g, axisColor.b, 100));
         renderTexture.draw(marker);
     }
-
 
     while (window.isOpen()) {
         sf::Event event{};
@@ -69,7 +69,7 @@ void Grapher::displayGraph(int size, std::vector<sf::Color>* lineColors, sf::Col
                         float y = (point->at(1) - yMin) / (yMax - yMin) * size;
                         sf::RectangleShape pointShape(sf::Vector2f(PIXELS_PER_UNIT, PIXELS_PER_UNIT));
                         pointShape.setPosition(x, y);
-                        pointShape.setFillColor(lineColors->at(k));
+                        pointShape.setFillColor(lineColors->at(k % lineColors->size()));
                         renderTexture.draw(pointShape);
                     }
                 }
@@ -83,11 +83,28 @@ void Grapher::displayGraph(int size, std::vector<sf::Color>* lineColors, sf::Col
                 xIn = roundf(xIn / step) * step;
                 yIn = roundf(yIn / step) * step;
             } else {
-                statements->clear();
+                xIn = xMin;
+                yIn = yMax;
             }
         window.draw(sf::Sprite(renderTexture.getTexture()));
         window.display();
     }
+}
+
+void Grapher::clearGraph() {
+    statements->clear();
+}
+
+void Grapher::clearStatement(int index) {
+    statements->erase(statements->begin() + index);
+}
+
+void Grapher::addStatement(Statement* statement) {
+    statements->emplace_back(statement);
+}
+
+Statement Grapher::atoiStatement(std::string statement) {
+    return Statement(statement);
 }
 
 
