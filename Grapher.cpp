@@ -8,10 +8,22 @@ Grapher::Grapher(std::vector<Statement*>* statements) {
     this->statements = statements;
 }
 
-void Grapher::displayGraph(float size, std::vector<sf::Color>* lineColors, sf::Color backgroundColor, sf::Color axisColor, float xMin, float xMax, float yMin, float yMax, float step, int SUB_STEPS, float PIXELS_PER_UNIT) {
+void Grapher::displayGraph(float size, std::vector<sf::Color>* lineColors, sf::Color backgroundColor, sf::Color axisColor, sf::Color fontColor, float xMin, float xMax, float yMin, float yMax, float step, int SUB_STEPS, float PIXELS_PER_UNIT) {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
+
     sf::RenderWindow window(sf::VideoMode(size, size + size/10), "Graph");
+
+    std::string textBox;
+    sf::Font font;
+    if (!font.loadFromFile("Fonts/BebasNeue-Regular.ttf"))
+        std::cout << "Error loading font" << std::endl;
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(50);
+    text.setFillColor(fontColor);
+    text.setPosition(0, size);
 
     this->backgroundColor = backgroundColor;
     this->lineColors = lineColors;
@@ -55,6 +67,19 @@ void Grapher::displayGraph(float size, std::vector<sf::Color>* lineColors, sf::C
             if (event.type == sf::Event::Closed) {
                 window.close();
                 break;
+            } else if (event.type == sf::Event::TextEntered) {
+                if (event.text.unicode == 8) {
+                    if (!textBox.empty())
+                        textBox.pop_back();
+                } else if (event.text.unicode == 10) {
+                    if (!textBox.empty()) {
+                        AtoS(textBox);
+                        textBox = "";
+                    }
+                } else {
+                    textBox += toupper(static_cast<char>(event.text.unicode));
+                }
+                text.setString(textBox);
             }
         }
         window.clear(backgroundColor);
@@ -87,6 +112,7 @@ void Grapher::displayGraph(float size, std::vector<sf::Color>* lineColors, sf::C
                 yIn = yMax;
             }
         window.draw(sf::Sprite(renderTexture.getTexture()));
+        window.draw(text);
         window.display();
     }
 }
@@ -103,8 +129,8 @@ void Grapher::addStatement(Statement* statement) {
     statements->emplace_back(statement);
 }
 
-Statement Grapher::atoiStatement(std::string statement) {
-    return Statement(statement);
+void Grapher::AtoS(const std::string& statement) {
+    addStatement(new Statement(statement));
 }
 
 

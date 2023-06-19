@@ -33,6 +33,11 @@ bool Equation::isVariable() {
     return false;
 }
 
+void Equation::addVariable(Equation* variable) {
+    this->variables->push_back(variable);
+    this->size++;
+}
+
 // Constant
 Constant::Constant(float value) : Equation({}) {
     this->value = value;

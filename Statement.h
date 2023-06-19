@@ -7,13 +7,14 @@
 
 #include "Equation.h"
 #include <iostream>
+#include <stack>
 
 typedef std::vector<Equation*> eq;
 
 class Statement {
 public:
     Statement(std::vector<Equation*>* variables, std::vector<Equation*>* equations);
-    Statement(std::string statement);
+    Statement(const std::string& statement);
     ~Statement() = default;
     std::vector<std::vector<float>*>* solve(float min, float max, float step);
     bool isSolved(float step);
@@ -23,7 +24,9 @@ private:
     std::vector<Equation*>* variables;
     std::vector<Equation*>* equations;
 
-    Equation* atoiEquation(std::string* str, Variable* X, Variable* Y);
+    static Equation* AtoE(std::vector<std::string>* tokens, Variable* X, Variable* Y);
+    static bool isNumber(const std::string& s);
+
 };
 
 

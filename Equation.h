@@ -16,6 +16,7 @@ public:
     virtual void setValue(float value);
     virtual bool isConstant();
     virtual bool isVariable();
+    virtual void addVariable(Equation* variable);
 protected:
     std::vector<Equation*>* variables;
     unsigned long size;
