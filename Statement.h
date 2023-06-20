@@ -14,9 +14,8 @@ typedef std::vector<Equation*> eq;
 class Statement {
 public:
     Statement(std::vector<Equation*>* variables, std::vector<Equation*>* equations);
-    Statement(const std::string& statement);
+    explicit Statement(const std::string& statement);
     ~Statement() = default;
-    std::vector<std::vector<float>*>* solve(float min, float max, float step);
     bool isSolved(float step);
     bool isSolved(std::vector<float>* permutation, float step);
     static std::vector<std::vector<float>*> generatePermutations(unsigned n, float min, float max, float step);

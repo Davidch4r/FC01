@@ -12,10 +12,11 @@ Statement::Statement(std::vector<Equation*>* variables, std::vector<Equation*>* 
 
 // Assume for just X and Y with 2 equations
 Statement::Statement(const std::string& statement) {
-    Variable X(new eq({new Constant(0)}));
-    Variable Y(new eq({new Constant(0)}));
-    this->variables = new std::vector<Equation*>({&X, &Y});
-    this->equations = new std::vector<Equation*>(2);
+    auto* X = new Variable(new eq({new Constant(0)}));
+    auto* Y = new Variable(new eq({new Constant(0)}));
+    X->setName("X");
+    Y->setName("Y");
+    this->variables = new std::vector<Equation*>({X, Y});
     std::string equation1 = statement.substr(0, statement.find('='));
     std::string equation2 = statement.substr(statement.find('=') + 1);
     std::vector<std::string> tokensEq1;
@@ -29,23 +30,10 @@ Statement::Statement(const std::string& statement) {
     while (std::getline(tokenStream, token, ' ')) {
         tokensEq2.push_back(token);
     }
-    this->equations->at(0) = AtoE(&tokensEq1, &X, &Y);;
-    this->equations->at(1) = AtoE(&tokensEq2, &X, &Y);;
-}
-
-std::vector<std::vector<float>*>* Statement::solve(float min, float max, float step) {
-    auto* results = new std::vector<std::vector<float>*>;
-    std::vector<std::vector<float>*> permutations = generatePermutations(this->variables->size(), min, max, step);
-    for (auto permutation : permutations) {
-        for (int i = 0; i < this->variables->size(); i++) {
-            this->variables->at(i)->setValue(permutation->at(i));
-        }
-        if (this->isSolved(step)) {
-
-            results->push_back(permutation);
-        }
-    }
-    return results;
+    this->equations = new std::vector<Equation*>({
+         AtoE(&tokensEq1, X, Y),
+         AtoE(&tokensEq2, X, Y)
+    });
 }
 
 bool Statement::isSolved(float step) {
@@ -107,18 +95,85 @@ Equation* Statement::AtoE(std::vector<std::string>* tokens, Variable* X, Variabl
     std::stack <Equation*> queue;
     queue.push(equation);
     for (const auto& token : *tokens) {
+        if (token == " " || token == "(" || token.empty()) {
+            continue;
+        }
         if (token == ")") {
             queue.pop();
-        } if (token == "X") {
+        } else if (token == "X") {
             queue.top()->addVariable(X);
         } else if (token == "Y") {
             queue.top()->addVariable(Y);
-        } else if (token == "ADD") {
-            auto* newEq = new Add(new eq());
-            queue.top()->addVariable(newEq);
-            queue.push(newEq);
         } else if (isNumber(token)){
             queue.top()->addVariable(new Constant(std::stof(token)));
+        } else {
+            auto* newEq = new Equation(new eq());
+            if (token == "ADD") {
+                newEq = new Add(new eq());
+            } else if (token == "SUB") {
+                newEq = new Subtract(new eq());
+            } else if (token == "MUL") {
+                newEq = new Multiply(new eq());
+            } else if (token == "DIV") {
+                newEq = new Divide(new eq());
+            } else if (token == "EXP") {
+                newEq = new Exponential(new eq());
+            } else if (token == "LOG") {
+                newEq = new Logarithm(new eq());
+            } else if (token == "SIN") {
+                newEq = new Sin(new eq());
+            } else if (token == "COS") {
+                newEq = new Cos(new eq());
+            } else if (token == "TAN") {
+                newEq = new Tan(new eq());
+            } else if (token == "CSC") {
+                newEq = new Csc(new eq());
+            } else if (token == "SEC") {
+                newEq = new Sec(new eq());
+            } else if (token == "COT") {
+                newEq = new Cot(new eq());
+            } else if (token == "ASIN") {
+                newEq = new ArcSin(new eq());
+            } else if (token == "ACOS") {
+                newEq = new ArcCos(new eq());
+            } else if (token == "ATAN") {
+                newEq = new ArcTan(new eq());
+            } else if (token == "ACSC") {
+                newEq = new ArcCsc(new eq());
+            } else if (token == "ASEC") {
+                newEq = new ArcSec(new eq());
+            } else if (token == "ACOT") {
+                newEq = new ArcCot(new eq());
+            } else if (token == "SINH") {
+                newEq = new Sinh(new eq());
+            } else if (token == "COSH") {
+                newEq = new Cosh(new eq());
+            } else if (token == "TANH") {
+                newEq = new Tanh(new eq());
+            } else if (token == "CSCH") {
+                newEq = new Csch(new eq());
+            } else if (token == "SECH") {
+                newEq = new Sech(new eq());
+            } else if (token == "COTH") {
+                newEq = new Coth(new eq());
+            } else if (token == "ASINH") {
+                newEq = new ArcSinh(new eq());
+            } else if (token == "ACOSH") {
+                newEq = new ArcCosh(new eq());
+            } else if (token == "ASECH") {
+                newEq = new ArcSech(new eq());
+            } else if (token == "ACOTH") {
+                newEq = new ArcCoth(new eq());
+            } else if (token == "ABS") {
+                newEq = new AbsoluteValue(new eq());
+            } else if (token == "SQRT") {
+                newEq = new SquareRoot(new eq());
+            } else {
+                std::cout << "Invalid token: =>" << token  << "<= " << std::endl;
+                continue;
+            }
+            queue.top()->addVariable(newEq);
+            queue.push(newEq);
         }
 
     }

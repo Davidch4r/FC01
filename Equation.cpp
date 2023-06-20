@@ -38,9 +38,23 @@ void Equation::addVariable(Equation* variable) {
     this->size++;
 }
 
+void Equation::print() {
+    std::cout << this->getName() << " ( ";
+    for (int i = 0; i < this->size; i++) {
+        this->variables->at(i)->print();
+        std::cout << " ";
+    }
+    std::cout << ")";
+}
+
+std::string Equation::getName() {
+    return this->name;
+}
+
 // Constant
 Constant::Constant(float value) : Equation({}) {
     this->value = value;
+    this->name = std::to_string(value);
 }
 
 float Constant::getValue() {
@@ -55,13 +69,26 @@ bool Constant::isConstant() {
     return true;
 }
 
+void Constant::print() {
+    std::cout << this->getName();
+}
+
 // Variable
+
 float Variable::getValue() {
     return this->variables->at(0)->getValue();
 }
 
 bool Variable::isVariable() {
     return true;
+}
+
+void Variable::setName(const std::string& name) {
+    this->name = name;
+}
+
+void Variable::print() {
+    std::cout << this->getName();
 }
 
 // Add
