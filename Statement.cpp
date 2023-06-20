@@ -107,6 +107,13 @@ Equation* Statement::AtoE(std::vector<std::string>* tokens, Variable* X, Variabl
         } else if (isNumber(token)){
             queue.top()->addVariable(new Constant(std::stof(token)));
         } else {
+            if (token == "PI") {
+                queue.top()->addVariable(new Constant(M_PI));
+                continue;
+            } else if (token == "E") {
+                queue.top()->addVariable(new Constant(M_E));
+                continue;
+            }
             auto* newEq = new Equation(new eq());
             if (token == "ADD") {
                 newEq = new Add(new eq());
