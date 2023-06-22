@@ -5,6 +5,7 @@
 #include <sstream>
 #include "Statement.h"
 
+
 Statement::Statement(std::vector<Equation*>* variables, std::vector<Equation*>* equations) {
     this->variables = variables;
     this->equations = equations;
@@ -17,8 +18,15 @@ Statement::Statement(const std::string& statement) {
     X->setName("X");
     Y->setName("Y");
     this->variables = new std::vector<Equation*>({X, Y});
-    std::string equation1 = statement.substr(0, statement.find('='));
-    std::string equation2 = statement.substr(statement.find('=') + 1);
+    std::string equation1;
+    std::string equation2;
+    if (statement.find('=') == std::string::npos)  {
+        equation1 = statement;
+        equation2 = "Y";
+    } else {
+        equation1 = statement.substr(0, statement.find('='));
+        equation2 = statement.substr(statement.find('=') + 1);
+    }
     std::vector<std::string> tokensEq1;
     std::vector<std::string> tokensEq2;
     std::string token;
@@ -91,6 +99,9 @@ std::vector<std::vector<float>*> Statement::generatePermutations(unsigned n, flo
  * Math Expression: sqrt(X)
  */
 Equation* Statement::AtoE(std::vector<std::string>* tokens, Variable* X, Variable* Y) {
+    if (tokens->empty()) {
+        return Y;
+    }
     auto* equation = new Equation(new eq());
     std::stack <Equation*> queue;
     queue.push(equation);
@@ -188,7 +199,12 @@ Equation* Statement::AtoE(std::vector<std::string>* tokens, Variable* X, Variabl
 }
 
 bool Statement::isNumber(const std::string& s) {
-    return !s.empty() && std::find_if(s.begin(),s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
+    try {
+        std::stof(s);
+        return true;
+    } catch (std::invalid_argument& e) {
+        return false;
+    }
 }
 
 

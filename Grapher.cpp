@@ -58,6 +58,19 @@ void Grapher::displayGraph(float size, std::vector<sf::Color*>* lineColors, sf::
                                 drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
                                 xIn = xMin;
                                 yIn = yMin;
+                            }else if (amount == "COLORS") {
+                                this->statementColors->clear();
+                                this->lineColors->clear();
+                                colorCounter = 0;
+                                xIn = xMin;
+                                yIn = yMin;
+                            } else if (amount == "LAST") {
+                                if (!statements->empty()) {
+                                    this->clearStatement(statements->size() - 1);
+                                    drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
+                                    xIn = xMin;
+                                    yIn = yMin;
+                                }
                             } else if (amount != " "){
                                 int index = std::stoi(amount) - 1;
                                 if (index < statements->size()) {
@@ -70,7 +83,7 @@ void Grapher::displayGraph(float size, std::vector<sf::Color*>* lineColors, sf::
                         } else if (firstWord == "QUIT") {
                             window.close();
                             break;
-                        } else if (firstWord == "CHANGESIZE")  {
+                        } else if (firstWord == "SIZE")  {
                             std::string amount = textBox.substr(textBox.find(' ') + 1);
                             if (amount != " ") {
                                 size = std::stof(amount);
@@ -79,7 +92,7 @@ void Grapher::displayGraph(float size, std::vector<sf::Color*>* lineColors, sf::
                                 xIn = xMin;
                                 yIn = yMin;
                             }
-                        } else if (firstWord == "SETSTEP") {
+                        } else if (firstWord == "STEP") {
                             std::string amount = textBox.substr(textBox.find(' ') + 1);
                             if (amount != " ") {
                                 step = std::stof(amount);
@@ -90,7 +103,7 @@ void Grapher::displayGraph(float size, std::vector<sf::Color*>* lineColors, sf::
                         } else if (firstWord == "XMIN") {
                             std::string amount = textBox.substr(textBox.find(' ') + 1);
                             if (amount != " ") {
-                                yMin = std::stof(amount);
+                                xMin = std::stof(amount);
                                 drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
                                 xIn = xMin;
                                 yIn = yMin;
@@ -98,7 +111,7 @@ void Grapher::displayGraph(float size, std::vector<sf::Color*>* lineColors, sf::
                         } else if (firstWord == "XMAX") {
                             std::string amount = textBox.substr(textBox.find(' ') + 1);
                             if (amount != " ") {
-                                yMax = std::stof(amount);
+                                xMax = std::stof(amount);
                                 drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
                                 xIn = xMin;
                                 yIn = yMin;
@@ -106,7 +119,7 @@ void Grapher::displayGraph(float size, std::vector<sf::Color*>* lineColors, sf::
                         } else if (firstWord == "YMIN") {
                             std::string amount = textBox.substr(textBox.find(' ') + 1);
                             if (amount != " ") {
-                                xMin = std::stof(amount);
+                                yMin = std::stof(amount);
                                 drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
                                 xIn = xMin;
                                 yIn = yMin;
@@ -114,12 +127,12 @@ void Grapher::displayGraph(float size, std::vector<sf::Color*>* lineColors, sf::
                         } else if (firstWord == "YMAX") {
                             std::string amount = textBox.substr(textBox.find(' ') + 1);
                             if (amount != " ") {
-                                xMax = std::stof(amount);
+                                yMax = std::stof(amount);
                                 drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
                                 xIn = xMin;
                                 yIn = yMin;
                             }
-                        } else if (firstWord == "SETBOUND") {
+                        } else if (firstWord == "BOUND") {
                             std::string amount = textBox.substr(textBox.find(' ') + 1);
                             if (amount != " ") {
                                 float bound = std::stof(amount);
@@ -131,8 +144,55 @@ void Grapher::displayGraph(float size, std::vector<sf::Color*>* lineColors, sf::
                                 xIn = xMin;
                                 yIn = yMin;
                             }
-                        }
-                        else {
+                        } else if (firstWord == "LEFT") {
+                            std::string amount = textBox.substr(textBox.find(' ') + 1);
+                            if (amount != " ") {
+                                xMin -= std::stof(amount);
+                                xMax -= std::stof(amount);
+                                drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
+                                xIn = xMin;
+                                yIn = yMin;
+                            }
+                        } else if (firstWord == "RIGHT") {
+                            std::string amount = textBox.substr(textBox.find(' ') + 1);
+                            if (amount != " ") {
+                                xMin += std::stof(amount);
+                                xMax += std::stof(amount);
+                                drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
+                                xIn = xMin;
+                                yIn = yMin;
+                            }
+                        } else if (firstWord == "DOWN") {
+                            std::string amount = textBox.substr(textBox.find(' ') + 1);
+                            if (amount != " ") {
+                                yMin -= std::stof(amount);
+                                yMax -= std::stof(amount);
+                                drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
+                                xIn = xMin;
+                                yIn = yMin;
+                            }
+                        } else if (firstWord == "UP") {
+                            std::string amount = textBox.substr(textBox.find(' ') + 1);
+                            if (amount != " ") {
+                                yMin += std::stof(amount);
+                                yMax += std::stof(amount);
+                                drawGraphAxis(xMin, xMax, yMin, yMax, size, axisColor, PIXELS_PER_UNIT);
+                                xIn = xMin;
+                                yIn = yMin;
+                            }
+                        } else if (firstWord == "ADDCOLOR") {
+                            std::string rgbVals = textBox.substr(textBox.find(' ') + 1);
+                            if (rgbVals != " ") {
+                                std::string r = rgbVals.substr(0, rgbVals.find(' '));
+                                std::string g = rgbVals.substr(rgbVals.find(' ') + 1, rgbVals.find(' ', rgbVals.find(' ') + 1));
+                                std::string b = rgbVals.substr(rgbVals.find(' ', rgbVals.find(' ') + 1) + 1);
+                                auto* color = new sf::Color(std::stoi(r), std::stoi(g), std::stoi(b));
+                                statementColors->emplace_back(color);
+                                lineColors->emplace_back(color);
+                                xIn = xMin;
+                                yIn = yMin;
+                            }
+                        } else {
                             AtoS(textBox);
                             xIn = xMin;
                             yIn = yMin;
@@ -163,8 +223,14 @@ void Grapher::displayGraph(float size, std::vector<sf::Color*>* lineColors, sf::
                         float x = (point->at(0) - xMin) / (xMax - xMin) * size;
                         float y = (point->at(1) - yMin) / (yMax - yMin) * size;
                         sf::RectangleShape pointShape(sf::Vector2f(PIXELS_PER_UNIT, PIXELS_PER_UNIT));
+                        sf::Color* color;
+                        if (statementColors->size() <= k) {
+                            color = new sf::Color(255, 255, 255);
+                        } else {
+                            color = statementColors->at(k);
+                        }
                         pointShape.setPosition(x, y);
-                        pointShape.setFillColor(*statementColors->at(k));
+                        pointShape.setFillColor(*color);
                         renderTexture->draw(pointShape);
                     }
                 }
@@ -200,8 +266,10 @@ void Grapher::clearStatement(int index) {
 
 void Grapher::addStatement(Statement* statement) {
     statements->emplace_back(statement);
-    statementColors->emplace_back(lineColors->at(colorCounter % lineColors->size()));
-    colorCounter++;
+    if (!lineColors->empty()) {
+        statementColors->emplace_back(lineColors->at(colorCounter % lineColors->size()));
+        colorCounter++;
+    }
 }
 
 void Grapher::AtoS(const std::string& statement) {
@@ -217,11 +285,11 @@ void Grapher::drawGraphAxis(float xMin, float xMax, float yMin, float yMax, floa
 
     // Draw axis
     sf::RectangleShape xAxis(sf::Vector2f(size, PIXELS_PER_UNIT));
-    xAxis.setPosition(0, xAxisOffset);
+    xAxis.setPosition(0, yAxisOffset);
     xAxis.setFillColor(axisColor);
     renderTexture->draw(xAxis);
     sf::RectangleShape yAxis(sf::Vector2f(PIXELS_PER_UNIT, size));
-    yAxis.setPosition(yAxisOffset, 0);
+    yAxis.setPosition(xAxisOffset, 0);
     yAxis.setFillColor(axisColor);
     renderTexture->draw(yAxis);
 

@@ -13,7 +13,6 @@
 #include <queue>
 
 
-
 class Grapher {
 public:
     Grapher(std::vector<Statement*>* statements);
