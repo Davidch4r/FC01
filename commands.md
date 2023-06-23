@@ -30,7 +30,7 @@ Operators are the functions that are used to calculate the values of the variabl
 - MUL => Multiplication
 - DIV => Division
 - EXP => Exponentiation (For example EXP ( X 2 ) is X^2 or EXP (X Y 2) is X^Y^2)
-- LOG => Logarithm (Base e)
+- LOG => Logarithm (Base is through the second number)
 - SIN => Sine
 - COS => Cosine
 - TAN => Tangent
@@ -98,4 +98,6 @@ These are currently the only commands but I plan on adding way more in the futur
 
 # Future Plans
 - Add more operators
-- ADD More Commands
+- Add More Commands
+- Add Error Handling
+- Properly Connect the dots
